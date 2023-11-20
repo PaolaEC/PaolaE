@@ -1,0 +1,50 @@
+---
+title: "Project"
+author: "Paola Estrada Contreras"
+date: "2023-11-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+library(tidyverse)
+library(plotly)
+
+```
+
+
+## Is there a significant difference in the time i am scheduled to work vs the amount of time i actually work
+
+$\mu1$: Number of hours scheduled
+$\mu2$: Number of hours actually worked
+
+$H_0: \mu1 =  \mu2$
+$H_a: \mu1 \neq \mu2$ 
+
+p-value = 0.01232
+
+At a 0.05 signifcance level, we reject the null hypothesis. There is enough eveidence to conclude that the the number of hours scheduled vs number of hours actually worked is significantly different. 
+
+```{r}
+LexHours=read_excel("C:/Users/epaol/OneDrive/Desktop/School/Fall 2023/DATA 211/Homework/LexHours.xlsx")
+
+LexHours
+
+t.test(LexHours$`Hours Scheduled`, LexHours$`Actual Hours Worked`, alternative = "two.sided", paired = TRUE)
+
+LexLong=LexHours%>%
+  pivot_longer(cols = c(`Hours Scheduled`,`Actual Hours Worked`), names_to = "type", values_to = "counts")
+
+LexLong
+
+LexBox=LexLong%>%
+  group_by(type)%>%
+  ggplot(aes(x=type, y=counts))+geom_boxplot(aes(colour=type), outlier.colour = "black")+labs(x="", y="Hours")
+
+ggplotly(LexBox)
+```
+
